@@ -6,7 +6,7 @@
  * @author Hamish Friedlander / SilverStripe
  *
  * See README.md for documentation
- * 
+ *
  */
 
 require 'PHPBuilder.php' ;
@@ -82,7 +82,7 @@ class PHPWriter {
 				'FAIL'
 			);
 	}
-	
+
 	function match_fail_block( $code ) {
 		$id = $this->varid() ;
 
@@ -235,16 +235,16 @@ abstract class Token extends PHPWriter {
 
 		return $code ;
 	}
-	
+
 }
 
 abstract class TokenTerminal extends Token {
 	function set_text( $text ) {
 		return $this->silent ? NULL : '$result["text"] .= ' . $text . ';';
 	}
-		
+
 	protected function match_code( $value ) {
-		return $this->match_fail_conditional( '( $subres = $this->'.$this->type.'( '.$value.' ) ) !== FALSE', 
+		return $this->match_fail_conditional( '( $subres = $this->'.$this->type.'( '.$value.' ) ) !== FALSE',
 			$this->set_text('$subres')
 		);
 	}
@@ -261,7 +261,7 @@ abstract class TokenExpressionable extends TokenTerminal {
 	function expression_replace($matches) {
 		return '\'.$this->expression($result, $stack, \'' . (!empty($matches[1]) ? $matches[1] : $matches[2]) . "').'";
 	}
-	
+
 	function match_code( $value ) {
 		$value = preg_replace_callback(self::$expression_rx, array($this, 'expression_replace'), $value);
 		return parent::match_code($value);
@@ -276,7 +276,7 @@ class TokenLiteral extends TokenExpressionable {
 	function match_code() {
 		// We inline single-character matches for speed
 		if ( !$this->contains_expression() && strlen( eval( 'return '.  $this->value . ';' ) ) == 1 ) {
-			return $this->match_fail_conditional( 'substr($this->string,$this->pos,1) == '.$this->value, 
+			return $this->match_fail_conditional( 'substr($this->string,$this->pos,1) == '.$this->value,
 				PHPBuilder::build()->l(
 					'$this->pos += 1;',
 					$this->set_text( $this->value )
@@ -293,7 +293,7 @@ class TokenRegex extends TokenExpressionable {
 		$rx = str_replace( '\\\\', '\\\\\\\\', $rx ) ;
 		return $rx ;
 	}
-	
+
 	function __construct( $value ) {
 		parent::__construct('rx', self::escape($value));
 	}
@@ -323,7 +323,7 @@ class TokenRecurse extends Token {
 	function match_function() {
 		return "'".$this->function_name($this->value)."'";
 	}
-	
+
 	function match_code() {
 		$function = $this->match_function() ;
 		$storetag = $this->function_name( $this->tag ? $this->tag : $this->match_function() ) ;
@@ -480,85 +480,85 @@ class Rule extends PHPWriter {
 	( [^=,]+ )   # Variable
 	(,|$)
 	@x';
-	
+
 	static $replacement_rx = '@
 	( ([^=]|=[^>])+ )    # What to replace
 	=>                   # The replacement mark
 	( [^,]+ )            # What to replace it with
 	(,|$)
 	@x';
-	
+
 	static $function_rx = '@^\s+function\s+([^\s(]+)\s*(.*)@' ;
 
 	protected $parser;
 	protected $lines;
-	
+
 	public $name;
 	public $extends;
 	public $mode;
 	public $rule;
-	
+
 	function __construct($parser, $lines) {
 		$this->parser = $parser;
 		$this->lines = $lines;
-		
+
 		// Find the first line (if any) that's an attached function definition. Can skip first line (unless this block is malformed)
 		for ($i = 1; $i < count($lines); $i++) {
 			if (preg_match(self::$function_rx, $lines[$i])) break;
 		}
-		
+
 		// Then split into the two parts
 		$spec = array_slice($lines, 0, $i);
 		$funcs = array_slice($lines, $i);
-		
+
 		// Parse out the spec
 		$spec = implode("\n", $spec);
 		if (!preg_match(self::$rule_rx, $spec, $specmatch)) user_error('Malformed rule spec ' . $spec, E_USER_ERROR);
-		
+
 		$this->name = $specmatch['name'];
-		
+
 		if ($specmatch['extends']) {
 			$this->extends = $this->parser->rules[$specmatch['extends']];
 			if (!$this->extends) user_error('Extended rule '.$specmatch['extends'].' is not defined before being extended', E_USER_ERROR);
 		}
-		
+
 		$this->arguments = array();
-		
+
 		if ($specmatch['arguments']) {
 			preg_match_all(self::$argument_rx, $specmatch['arguments'], $arguments, PREG_SET_ORDER);
-			
+
 			foreach ($arguments as $argument){
 				$this->arguments[trim($argument[1])] = trim($argument[2]);
 			}
 		}
-		
+
 		$this->mode = $specmatch['matchmark'] ? 'rule' : 'replace';
-		
+
 		if ($this->mode == 'rule') {
 			$this->rule = $specmatch['rule'];
 			$this->parse_rule() ;
 		}
 		else {
 			if (!$this->extends) user_error('Replace matcher, but not on an extends rule', E_USER_ERROR);
-			
+
 			$this->replacements = array();
 			preg_match_all(self::$replacement_rx, $specmatch['rule'], $replacements, PREG_SET_ORDER);
-			
+
 			$rule = $this->extends->rule;
-			
+
 			foreach ($replacements as $replacement) {
 				$search = trim($replacement[1]);
 				$replace = trim($replacement[3]); if ($replace == "''" || $replace == '""') $replace = "";
-				
+
 				$rule = str_replace($search, ' '.$replace.' ', $rule);
 			}
-			
+
 			$this->rule = $rule;
 			$this->parse_rule() ;
 		}
-		
+
 		// Parse out the functions
-		
+
 		$this->functions = array() ;
 
 		$active_function = NULL ;
@@ -586,7 +586,7 @@ class Rule extends PHPWriter {
 			$this->tokenize( $rule, $tokens ) ;
 			$this->parsed = ( count( $tokens ) == 1 ? array_pop( $tokens ) : new TokenSequence( $tokens ) ) ;
 		}
-		
+
 	}
 
 	static $rx_rx = '{^/(
@@ -664,7 +664,7 @@ class Rule extends PHPWriter {
 					case '!':
 						$pending->set( 'negative_lookahead' ) ;
 						break ;
-						
+
 					case '.':
 						$pending->set( 'silent' );
 						break;
@@ -713,7 +713,7 @@ class Rule extends PHPWriter {
 	 */
 	function compile($indent) {
 		$function_name = $this->function_name( $this->name ) ;
-		
+
 		// Build the typestack
 		$typestack = array(); $class=$this;
 		do {
@@ -722,7 +722,7 @@ class Rule extends PHPWriter {
 		while($class = $class->extends);
 
 		$typestack = "array('" . implode("','", $typestack) . "')";
-		
+
 		// Build an array of additional arguments to add to result node (if any)
 		if (empty($this->arguments)) {
 			$arguments = 'null';
@@ -732,9 +732,9 @@ class Rule extends PHPWriter {
 			foreach ($this->arguments as $k=>$v) { $arguments .= "'$k' => '$v'"; }
 			$arguments .= ")";
 		}
-		
+
 		$match = PHPBuilder::build() ;
-		
+
 		$match->l("protected \$match_{$function_name}_typestack = $typestack;");
 
 		$match->b( "function match_{$function_name} (\$stack = array())",
@@ -764,43 +764,43 @@ class RuleSet {
 	function addRule($indent, $lines, &$out) {
 		$rule = new Rule($this, $lines) ;
 		$this->rules[$rule->name] = $rule;
-		
+
 		$out[] = $indent . '/* ' . $rule->name . ':' . $rule->rule . ' */' . PHP_EOL ;
 		$out[] = $rule->compile($indent) ;
 		$out[] = PHP_EOL ;
 	}
-	
+
 	function compile($indent, $rulestr) {
 		$indentrx = '@^'.preg_quote($indent).'@';
-		
+
 		$out = array();
 		$block = array();
-		
+
 		foreach (preg_split('/\r\n|\r|\n/', $rulestr) as $line) {
 			// Ignore blank lines
 			if (!trim($line)) continue;
 			// Ignore comments
 			if (preg_match('/^[\x20|\t]+#/', $line)) continue;
-			
+
 			// Strip off indent
-			if (!empty($indent)) { 
+			if (!empty($indent)) {
 				if (strpos($line, $indent) === 0) $line = substr($line, strlen($indent));
 				else user_error('Non-blank line with inconsistent index in parser block', E_USER_ERROR);
 			}
-			
+
 			// Any indented line, add to current set of lines
 			if (preg_match('/^\x20|\t/', $line)) $block[] = $line;
-			
+
 			// Any non-indented line marks a new block. Add a rule for the current block, then start a new block
 			else {
 				if (count($block)) $this->addRule($indent, $block, $out);
 				$block = array($line);
 			}
 		}
-		
+
 		// Any unfinished block add a rule for
 		if (count($block)) $this->addRule($indent, $block, $out);
-		
+
 		// And return the compiled version
 		return implode( '', $out ) ;
 	}
@@ -809,7 +809,7 @@ class RuleSet {
 class ParserCompiler {
 
 	static $parsers = array();
-	
+
 	static $debug = false;
 
 	static $currentClass = null;
@@ -817,12 +817,12 @@ class ParserCompiler {
 	static function create_parser( $match ) {
 		/* We allow indenting of the whole rule block, but only to the level of the comment start's indent */
 		$indent = $match[1];
-		
+
 		/* Get the parser name for this block */
 		if     ($class = trim($match[2])) self::$currentClass = $class;
 		elseif (self::$currentClass)      $class = self::$currentClass;
 		else                              $class = self::$currentClass = 'Anonymous Parser';
-		
+
 		/* Check for pragmas */
 		if (strpos($class, '!') === 0) {
 			switch ($class) {
@@ -839,12 +839,12 @@ class ParserCompiler {
 					self::$debug = true;
 					return '';
 			}
-			
+
 			throw new Exception("Unknown pragma $class encountered when compiling parser");
 		}
-		
+
 		if (!isset(self::$parsers[$class])) self::$parsers[$class] = new RuleSet();
-		
+
 		return self::$parsers[$class]->compile($indent, $match[3]);
 	}
 

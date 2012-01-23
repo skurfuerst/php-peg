@@ -81,13 +81,13 @@ class Parser {
 
 	function expression( $result, $stack, $value ) {
 		$stack[] = $result; $rv = false;
-		
+
 		/* Search backwards through the sub-expression stacks */
 		for ( $i = count($stack) - 1 ; $i >= 0 ; $i-- ) {
 			$node = $stack[$i];
-			
+
 			if ( isset($node[$value]) ) { $rv = $node[$value]; break; }
-			
+
 			foreach ($this->typestack($node['_matchrule']) as $type) {
 				$callback = array($this, "{$type}_DLR{$value}");
 				if ( is_callable( $callback ) ) { $rv = call_user_func( $callback ) ; if ($rv !== FALSE) break; }
@@ -99,7 +99,7 @@ class Parser {
 
 		return is_array($rv) ? $rv['text'] : ($rv ? $rv : '');
 	}
-	
+
 	function packhas( $key, $pos ) {
 		return false ;
 	}
@@ -116,7 +116,7 @@ class Parser {
 		$prop = "match_{$name}_typestack";
 		return $this->$prop;
 	}
-	
+
 	function construct( $matchrule, $name, $arguments = null ) {
 		$result = array( '_matchrule' => $matchrule, 'name' => $name, 'text' => '' );
 		if ($arguments) $result = array_merge($result, $arguments) ;
@@ -155,14 +155,14 @@ class Parser {
 				call_user_func_array( $callback, array( &$result, $subres ) ) ;
 				$storecalled = true; break;
 			}
-			
+
 			$globalcb = array( $this, "{$type}_STR" ) ;
 			if ( is_callable( $globalcb ) ) {
 				call_user_func_array( $globalcb, array( &$result, $subres ) ) ;
 				$storecalled = true; break;
 			}
-		}	
-		
+		}
+
 		if ( $storetag && !$storecalled ) {
 			if ( !isset( $result[$storetag] ) ) $result[$storetag] = $subres ;
 			else {
