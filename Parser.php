@@ -269,16 +269,19 @@ class FalseOnlyPackrat extends Parser {
  * @author Hamish Friedlander
  */
 class ConservativePackrat extends Parser {
-	function packhas( $key ) {
+	// The $value default parameter is NOT used, it is just added to conform to interface
+	function packhas( $key, $value = NULL) {
 		return isset( $this->packres[$key] ) && $this->packres[$key] !== NULL ;
 	}
 
-	function packread( $key ) {
+	// The $value default parameter is NOT used, it is just added to conform to interface
+	function packread( $key, $value = NULL ) {
 		$this->pos = $this->packpos[$key];
 		return $this->packres[$key] ;
 	}
 
-	function packwrite( $key, $res ) {
+	// The $thirdArgument default parameter is NOT used, it is just added to conform to interface
+	function packwrite( $key, $res, $thirdArgument = NULL ) {
 		if ( isset( $this->packres[$key] ) ) {
 			$this->packres[$key] = $res ;
 			$this->packpos[$key] = $this->pos ;
