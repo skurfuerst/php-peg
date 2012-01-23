@@ -3,8 +3,8 @@
 
 $base = dirname(dirname(__FILE__));
 
-include "$base/Compiler.php";
-include "$base/Parser.php";
+include_once "$base/Compiler.php";
+include_once "$base/Parser.php";
 
 class ParserTestWrapper {
 
