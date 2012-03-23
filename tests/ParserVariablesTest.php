@@ -14,13 +14,13 @@ class ParserVariablesTest extends ParserTestBase {
 			Qux: Letter:"d" "{$Letter}a{$Letter}a"
 			*/
 		');
-		
+
 		$parser->assertMatches('Foo', 'aa');
 		$parser->assertMatches('Bar', 'bb b');
 		$parser->assertMatches('Baz', 'cc a c a');
 		$parser->assertMatches('Qux', 'ddada');
 	}
-	
+
 	public function testRecurseOnVariables() {
 		$parser = $this->buildParser('
 			/*!* RecurseOnVariablesParser
@@ -34,10 +34,12 @@ class ParserVariablesTest extends ParserTestBase {
 			*/
 		');
 
-		$parser->assertMatches('Bar', 'a');	$parser->assertDoesntMatch('Bar', 'b');
-		$parser->assertMatches('Baz', 'b');	$parser->assertDoesntMatch('Baz', 'a');
+		$parser->assertMatches('Bar', 'a');
+		$parser->assertDoesntMatch('Bar', 'b');
+		$parser->assertMatches('Baz', 'b');
+		$parser->assertDoesntMatch('Baz', 'a');
 	}
-	
+
 	public function testSetOnRuleVariables() {
 		$parser = $this->buildParser('
 			/*!* SetOnRuleVariablesParser

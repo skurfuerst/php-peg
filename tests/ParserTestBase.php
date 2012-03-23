@@ -8,29 +8,29 @@ include_once "$base/Parser.php";
 
 class ParserTestWrapper {
 
-	function __construct($testcase, $class){
+	function __construct($testcase, $class) {
 		$this->testcase = $testcase;
 		$this->class = $class;
 	}
 
-	function match($method, $string, $allowPartial = false){
+	function match($method, $string, $allowPartial = false) {
 		$class = $this->class;
-		$func = 'match_'.$method;
+		$func = 'match_' . $method;
 
 		$parser = new $class($string);
 		$res = $parser->$func();
 		return ($allowPartial || $parser->pos == strlen($string)) ? $res : false;
 	}
 
-	function matches($method, $string, $allowPartial = false){
+	function matches($method, $string, $allowPartial = false) {
 		return $this->match($method, $string, $allowPartial) !== false;
 	}
 
-	function assertMatches($method, $string, $message = null){
+	function assertMatches($method, $string, $message = null) {
 		$this->testcase->assertTrue($this->matches($method, $string), $message ? $message : "Assert parser method $method matches string $string");
 	}
 
-	function assertDoesntMatch($method, $string, $message = null){
+	function assertDoesntMatch($method, $string, $message = null) {
 		$this->testcase->assertFalse($this->matches($method, $string), $message ? $message : "Assert parser method $method doesn't match string $string");
 	}
 }
@@ -38,11 +38,10 @@ class ParserTestWrapper {
 class ParserTestBase extends \PHPUnit_Framework_TestCase {
 
 	function buildParser($parser) {
-		$class = 'Parser'.sha1($parser);
+		$class = 'Parser' . sha1($parser);
 
 		echo ParserCompiler::compile("class $class extends \PhpPeg\Parser {\n $parser\n}") . "\n\n\n";
 		eval(ParserCompiler::compile("class $class extends \PhpPeg\Parser {\n $parser\n}"));
 		return new ParserTestWrapper($this, $class);
 	}
-
 }

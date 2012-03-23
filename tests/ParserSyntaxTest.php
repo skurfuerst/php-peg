@@ -18,10 +18,11 @@ class ParserSyntaxTest extends ParserTestBase {
 				"b"
 			*/
 		');
-		
+
 		$parser->assertMatches('Foo', 'ab');
 		$parser->assertMatches('Bar', 'ab');
 		$parser->assertMatches('Baz', 'ab');
 		$parser->assertMatches('Qux', 'ab');
 	}
+
 }

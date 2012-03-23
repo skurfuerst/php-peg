@@ -3,4 +3,4 @@ namespace PhpPeg;
 
 require 'Compiler.php' ;
 
-ParserCompiler::cli( $_SERVER['argv'] ) ;
+ParserCompiler::cli($_SERVER['argv']);
