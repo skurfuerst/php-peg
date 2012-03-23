@@ -2,7 +2,7 @@
 
 require '../Parser.php' ;
 
-class Calculator extends Parser {
+class Calculator extends \PhpPeg\Parser {
 
 /*!* Calculator
 

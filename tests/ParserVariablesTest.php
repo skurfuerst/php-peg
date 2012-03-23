@@ -1,9 +1,10 @@
 <?php
+namespace PhpPeg;
 
 require_once "ParserTestBase.php";
 
 class ParserVariablesTest extends ParserTestBase {
-	
+
 	public function testBasicLiteralVariables() {
 		$parser = $this->buildParser('
 			/*!* BasicVariables

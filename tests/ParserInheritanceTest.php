@@ -1,11 +1,12 @@
 <?php
+namespace PhpPeg;
 
 require_once "ParserTestBase.php";
 
 class ParserInheritanceTest extends ParserTestBase {
-	
+
 	public function testBasicInheritance() {
-		
+
 		$parser = $this->buildParser('
 			/*!* BasicInheritanceTestParser
 			Foo: "a"

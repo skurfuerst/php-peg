@@ -1,4 +1,5 @@
 <?php
+namespace PhpPeg;
 
 require 'Compiler.php' ;
 

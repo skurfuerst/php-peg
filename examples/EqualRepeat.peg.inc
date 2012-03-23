@@ -2,7 +2,7 @@
 
 require '../Parser.php' ;
 
-class EqualRepeat extends Packrat {
+class EqualRepeat extends \PhpPeg\Packrat {
 /* Any number of a followed by the same number of b and the same number of c characters
  * aabbcc - good
  * aaabbbccc - good

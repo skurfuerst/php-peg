@@ -1,4 +1,5 @@
 <?php
+namespace PhpPeg;
 
 /**
  * PEG Generator - A PEG Parser for PHP
@@ -858,7 +859,7 @@ class ParserCompiler {
 			\*/                                        # The comment end
 		@mx';
 
-		return preg_replace_callback( $rx, array( 'ParserCompiler', 'create_parser' ), $string ) ;
+		return preg_replace_callback( $rx, array( 'PhpPeg\ParserCompiler', 'create_parser' ), $string ) ;
 	}
 
 	static function cli( $args ) {

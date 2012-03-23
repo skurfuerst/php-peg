@@ -1,5 +1,5 @@
 <?php
-
+namespace PhpPeg;
 
 $base = dirname(dirname(__FILE__));
 
@@ -35,13 +35,13 @@ class ParserTestWrapper {
 	}
 }
 
-class ParserTestBase extends PHPUnit_Framework_TestCase {
+class ParserTestBase extends \PHPUnit_Framework_TestCase {
 
 	function buildParser($parser) {
 		$class = 'Parser'.sha1($parser);
 
-		echo ParserCompiler::compile("class $class extends Parser {\n $parser\n}") . "\n\n\n";
-		eval(ParserCompiler::compile("class $class extends Parser {\n $parser\n}"));
+		echo ParserCompiler::compile("class $class extends \PhpPeg\Parser {\n $parser\n}") . "\n\n\n";
+		eval(ParserCompiler::compile("class $class extends \PhpPeg\Parser {\n $parser\n}"));
 		return new ParserTestWrapper($this, $class);
 	}
 

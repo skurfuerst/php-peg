@@ -1,4 +1,5 @@
 <?php
+namespace PhpPeg;
 
 require_once "ParserTestBase.php";
 
