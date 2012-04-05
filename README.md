@@ -19,11 +19,10 @@ $res = $x->match_Expr();
 
 Parsers are contained within a PHP file, in one or more special comment blocks that start with `/*!* [name | !pragma]` (like a docblock, but with an
 exclamation mark in the middle of the stars)
-
 You can have multiple comment blocks, all of which are treated as contiguous for the purpose of compiling. During compilation these blocks will be replaced 
 with a set of "matching" functions (functions which match a string against their rules) for each rule in the block.
 
-The optional name marks the start of a new set of parser rules. This is currently unused, but might be used in future for opimization & debugging purposes.
+The optional name marks the start of a new set of parser rules. This is currently unused, but might be used in future for optimization & debugging purposes.
 If unspecified, it defaults to the same name as the previous parser comment block, or 'Anonymous Parser' if no name has ever been set.
 
 If the name starts with an '!' symbol, that comment block is a pragma, and is treated not as some part of the parser, but as a special block of meta-data
@@ -54,7 +53,7 @@ a name for the rule, the name of the rule to extend, and optionally: some argume
 
 ##### Tricks and traps
 
-We allow indenting a parser block, but only in a consistant manner - whatever the indent of the /*** marker becomes the "base" indent, and needs to be used 
+We allow indenting a parser block, but only in a consistent manner - whatever the indent of the /*** marker becomes the "base" indent, and needs to be used 
 for all lines. You can mix tabs and spaces, but the indent must always be an exact match - if the "base" indent is a tab then two spaces, every line within the
 block also needs indenting with a tab then two spaces, not two tabs (even if in your editor, that gives the same indent).
 
@@ -73,7 +72,7 @@ PEG matching rules try to follow standard PEG format, summarised thusly:
     token? - Token is optionally present
 
     tokena tokenb - Token tokenb follows tokena, both of which are present
-    tokena | tokenb - One of tokena or tokenb are present, prefering tokena
+    tokena | tokenb - One of tokena or tokenb are present, preferring tokena
 
     &token - Token is present next (but not consumed by parse)
     !token - Token is not present next (but not consumed by parse)
@@ -91,13 +90,13 @@ Tokens may be
 
  - bare-words, which are recursive matchers - references to token rules defined elsewhere in the grammar,
  - literals, surrounded by `"` or `'` quote pairs. No escaping support is provided in literals.
- - regexs, surrounded by `/` pairs.
+ - regexes, surrounded by `/` pairs.
  - expressions - single words (match \w+) starting with `$` or more complex surrounded by `${ }` which call a user defined function to perform the match
 
 ##### Regular expression tokens
 
 Automatically anchored to the current string start - do not include a string start anchor (`^`) anywhere. Always acts as when the 'x' flag is enabled in PHP - 
-whitespace is ignored unless escaped, and '#' stats a comment.
+whitespace is ignored unless escaped, and '#' starts a comment.
 
 Be careful when ending a regular expression token - the '*/' pattern (as in /foo\s*/) will end a PHP comment. Since the 'x' flag is always active,
 just split with a space (as in / foo \s* /)
@@ -129,7 +128,7 @@ travelled up checking for one of the following:
   - A rule-attached method INCLUDING `$` ( i.e. `function $foo()` )
   
 If no value is found it will then check if a method or a property excluding the $ exists on the parser. If neither of those is found
-the expression will be replaced with an exmpty string/
+the expression will be replaced with an empty string.
 
 #### As tokens
 
@@ -141,7 +140,7 @@ To find the name of the rule to match against, the expression stack will be trav
   - A key / value pair in the result array node
   - A rule-attached method INCLUDING `$` ( i.e. `function $foo()` )
   
-If no value is found it will then check if a method or a property excluding the $ exists on the parser. If neither of those if found
+If no value is found it will then check if a method or a property excluding the $ exists on the parser. If neither of those is found
 the rule will fail to match.
 
 #### Tricks and traps
@@ -164,13 +163,13 @@ Tokens and groups can be given names by prepending name and `:`, e.g.,
 rulea: "'" name:( tokena tokenb )* "'"
 ```
 
-There must be no space betweeen the name and the `:`
+There must be no space between the name and the `:`
 
 ```
 badrule: "'" name : ( tokena tokenb )* "'"
 ```
 
-Recursive matchers can be given a name the same as their rule name by prepending with just a `:`. These next two rules are equivilent
+Recursive matchers can be given a name the same as their rule name by prepending with just a `:`. These next two rules are equivalent
 
 ```
 rulea: tokena tokenb:tokenb
@@ -274,7 +273,7 @@ override some storage logic but not the rule itself
 #### Text replacement
 
 You can replace some parts of the inherited rule using test replacement by using a ';' instead of an ':' after the name
- of the extended rule. You can then put replacements in a comma seperated list. An example might help
+ of the extended rule. You can then put replacements in a comma separated list. An example might help
 
 ```
 A: Foo | Bar | Baz
@@ -323,7 +322,7 @@ part of the parser language itself, but some other instruction to the compiler. 
 
 ## TODO
 
-- Allow configuration of whitespace - specify what matches, and wether it should be injected into results as-is, collapsed, or not at all
+- Allow configuration of whitespace - specify what matches, and whether it should be injected into results as-is, collapsed, or not at all
 - Allow inline-ing of rules into other rules for speed
 - More optimisation
 - Make Parser-parser be self-generated, instead of a bad hand rolled parser like it is now.
